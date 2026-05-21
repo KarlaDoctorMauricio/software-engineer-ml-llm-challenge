@@ -41,24 +41,6 @@ class DelayModel:
         """
         df = data.copy()
 
-        # Generate min_diff feature
-        fecha_o = pd.to_datetime(
-            df["Fecha-O"],
-            format="%Y-%m-%d %H:%M:%S"
-        )
-
-        fecha_i = pd.to_datetime(
-            df["Fecha-I"],
-            format="%Y-%m-%d %H:%M:%S"
-        )
-
-        df["min_diff"] = (
-            fecha_o - fecha_i
-        ).dt.total_seconds() / 60
-
-        # Generate target
-        df["delay"] = (df["min_diff"] > 15).astype(int)
-
         # One-hot encoding
         features = pd.concat(
             [
@@ -77,11 +59,26 @@ class DelayModel:
         # Keep only selected features
         features = features[TOP_FEATURES].astype(int)
 
-        # Return target if requested
+        # If target_column is provided, we are in training mode
         if target_column is not None:
-            target = df[[target_column]]
+
+            # Validate required date columns for target computation
+            if "Fecha-O" not in df.columns or "Fecha-I" not in df.columns:
+                raise ValueError("Missing date columns for training")
+
+            # Convert date columns to datetime
+            fecha_o = pd.to_datetime(df["Fecha-O"], format="%Y-%m-%d %H:%M:%S")
+            fecha_i = pd.to_datetime(df["Fecha-I"], format="%Y-%m-%d %H:%M:%S")
+
+            # Compute time difference in minutes between actual and scheduled departure
+            min_diff = (fecha_o - fecha_i).dt.total_seconds() / 60
+
+            # Create binary target: 1 if delay is greater than 15 minutes
+            target = pd.DataFrame({target_column: (min_diff > 15).astype(int)})
+
             return features, target
 
+        # In inference/API mode, return only features (no target, no dates)
         return features
 
     def fit(
