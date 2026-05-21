@@ -1,5 +1,5 @@
 import pandas as pd
-
+from sklearn.linear_model import LogisticRegression
 from typing import Tuple, Union, List
 
 TOP_FEATURES = [
@@ -96,6 +96,15 @@ class DelayModel:
             features (pd.DataFrame): preprocessed data.
             target (pd.DataFrame): target.
         """
+        y = target["delay"].values.ravel()
+
+        self._model = LogisticRegression(
+            class_weight="balanced",
+            random_state=42,
+            max_iter=1000
+        )
+
+        self._model.fit(features, y)
         return
 
     def predict(
