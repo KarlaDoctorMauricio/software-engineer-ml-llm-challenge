@@ -120,4 +120,9 @@ class DelayModel:
         Returns:
             (List[int]): predicted targets.
         """
-        return
+        # Return default predictions if the model has not been trained yet
+        if self._model is None:
+            return [0] * len(features)
+
+        predictions = self._model.predict(features)
+        return [int(prediction) for prediction in predictions]
