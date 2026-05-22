@@ -21,7 +21,6 @@ jobs:
 
       - name: Install dependencies
         run: make install
-        env:
 
       - name: Run stress test
         run: make stress-test
