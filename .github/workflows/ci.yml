@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
 
     steps:
       - uses: actions/checkout@v4
@@ -20,8 +22,6 @@ jobs:
 
       - name: Install dependencies
         run: make install
-             pip install "anyio<4"
-             pip install "pytest==7.4.4"
 
       - name: Run API tests
         run: make api-test
