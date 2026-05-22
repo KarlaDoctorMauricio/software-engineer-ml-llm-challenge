@@ -10,7 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-    PYTEST_ADDOPTS: "-p no:anyio"
+      PYTEST_ADDOPTS: "-p no:anyio"
 
     steps:
       - uses: actions/checkout@v4
