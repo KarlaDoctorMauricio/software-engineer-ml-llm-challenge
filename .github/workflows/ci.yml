@@ -20,8 +20,6 @@ jobs:
 
       - name: Install dependencies
         run: make install
-             pip install "anyio<4"
-             pip install "pytest==7.4.4"
 
       - name: Run API tests
         run: make api-test
